@@ -1,0 +1,32 @@
+#Install the following libraries.  
+#Ensure the following libraries are installed.  
+
+library(affy)
+library(annotate)
+library(org.Hs.eg.db)
+library(oligo)
+library(limma)
+library(affycoretools) 
+library(annotate)
+library(annotationTools)
+
+#Set directory which your cell files are in:
+setwd('/home/users/jdoe/affymetrix/project_1/')
+
+#Read cel files.
+list.celfiles()
+dat <- read.celfiles(list.celfiles())
+eset<-rma(dat)
+#eset<-rma(Data, target = "probeset")
+#eset<-rma(Data, target = "core")
+
+
+###### Check your annotation package by examining the "est" object. Ensure it is installed as such
+# Example if "Annotation: pd.clariom.d.human"
+#source("http://bioconductor.org/biocLite.R")
+#biocLite("pd.clariom.d.human")
+#libary(pd.clariom.d.human)
+
+
+
+

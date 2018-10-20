@@ -2,7 +2,7 @@
 R script for converting newer Clariom Affymetrix RMA CEL files to CIBERSORT Mixture File 
 
 Note: 
-Although there are many similar scripts to this, I found this method most useful in preparing Clariom Affymetrix microarrays.
+I find this to be the most robust and consistent method for preparing Clariom Affymetrix microarrays. 
 
 Certain Affyimetrix Clariom arrays do not support certain levels (e.g. Clariom S does not support "probset" level).
 

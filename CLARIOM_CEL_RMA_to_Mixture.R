@@ -1,62 +1,40 @@
-#Install the following libraries.  
-#Ensure the following libraries are installed.  
+#Ensure relevant libraries are installed.
 
-library(affy)
-library(annotate)
-library(org.Hs.eg.db)
-library(oligo)
-library(limma)
-library(affycoretools) 
-library(annotate)
-library(annotationTools)
+#if (!requireNamespace("BiocManager", quietly = TRUE))
+#  install.packages("BiocManager")
+#BiocManager::install("affxparser")
 
-#Set directory which your cell files are in:
-setwd('/home/users/jdoe/affymetrix/project_1/')
+library(affxparser)
 
-#Read cel files. Choose between what level (target) you wish to use.
-list.celfiles()
-dat <- read.celfiles(list.celfiles())
-eset<-rma(dat)
-#eset<-rma(Data, target = "probeset")
-#eset<-rma(Data, target = "core")
-#eset<-rma(Data, target = "full")
-#eset<-rma(Data, target = "extended")
+#Place all .chp files ALONE in their own directory for simplicity sake.
+#Can additionally add grep command e.g. grep("*\.chp$, directoryContents) to filter for only .chp files on chpList variable
 
+setwd('/Users/jDoe/Documents/projects/Affymetrix1/chpFiles')
+chpList <- list.files()
 
+#Initialize data frame of first .chp in chpList with probe names and it's quantification value
+sample<-strsplit(chpList[1], "[.]")[[1]][1]
+dat=readChp(chpList[1],withQuant = TRUE)
+unformated_signal = dat[['QuantificationEntries']]
+x = data.frame(ProbeSetName=unformated_signal$ProbeSetName, sample=unformated_signal$QuantificationValue)
+colnames(x)[colnames(x)=='sample']<-sample
 
-###### Check your annotation package by examining the "est" object. Ensure it is installed as such
-# Example if "Annotation: pd.clariom.d.human"
-#source("http://bioconductor.org/biocLite.R")
-#biocLite("pd.clariom.d.human")
-#libary(pd.clariom.d.human)
+#Loop over all additional .chp files and merge their quantification values on probe names.
+for (i in 2:length(chpList)){
+  sample<-strsplit(chpList[i], "[.]")[[1]][1]
+  dat=readChp(chpList[i],withQuant = TRUE)
+  unformated_signal = dat[['QuantificationEntries']]
+  rma_signal = data.frame(ProbeSetName=unformated_signal$ProbeSetName, sample=unformated_signal$QuantificationValue)
+  colnames(rma_signal)[colnames(rma_signal)=='sample']<-sample
+  x<-merge(x,rma_signal, by='ProbeSetName')
+}
 
-eset <- annotateEset(eset, pd.clariom.d.human)
-#eset <- annotateEset(eset, pd.clariom.d.human, type = "probeset")
-#eset <- annotateEset(eset, pd.clariom.d.human, type = "core")
-#eset <- annotateEset(eset, pd.clariom.d.human, type = "full")
-#eset <- annotateEset(eset, pd.clariom.d.human, type = "extended")
+#Set probe names as the data frame's row names and remove probe names as a column
+rownames(x)<-x[,1]
+x<-x[,-1]
 
-#Generate feature data
-featureData(eset)
-exprDat <- as.data.frame(exprs(eset))
-
-#Combine feature data with expression matrix and remove unnecessary rows.
-fdat <- fdat <- as.data.frame(fData(eset))
-mixture <- cbind(fdat, exp_vals)
-mixture <- mixture[ , -which(names(mixture) %in% c("PROBEID","ID","GENENAME"))]
-
-#Per CIBERSORT, drop NA gene symbols and order by gene symbol ascending.
-mixture <- mixture[which(mixture[,1] != "NA"),]
-mixture <- mixture[order(mixture[,1]),]
-
-#Write mixture file for analysis:
-write.table(mixture,file="RMA_Mixture_File.txt",sep="\t", col.names=T, row.names=F,quote=FALSE)
-
-
-
-
-
-
+#### You can now proceed with analysis. 
+#### A good resource for limma differential expression: https://wiki.bits.vib.be/index.php/Analyze_your_own_microarray_data_in_R/Bioconductor
 
 
 

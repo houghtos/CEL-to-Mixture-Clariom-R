@@ -1,17 +1,2 @@
-# R-CEL-to-Mixture-Clariom-Affymetrix-Chips
-Basic R script for converting RMA Clariom Affymetrix CEL files to CIBERSORT Mixture File 
-
-  Note: 
-  I find this to be the most robust and consistent method for preparing these Clariom Affymetrix microarrays. 
-
-  Certain Affyimetrix Clariom arrays do not support certain levels (e.g. Clariom S does not support "probset" level).
-
-###### To obtain summaries at the probeset level, the user should set the RMA target argument to 'probeset'.
-
-###### Transcript level summaries are also possible. 
-  - For Exon arrays, there are three possible options for transcript level summarization: 
-    1. core 
-    2. full 
-    3. extended. 
-    
-  - For Gene arrays, only summaries for 'core' probesets is available.
+# SST-RMA Analysis in R
+While loading Affymetrix microarray .CEL files with RMA normalization has been well documented, there are not many resources on analyzing SST-RMA chips in the R environment or without Affymetrix proprietary software such as Windows dependent Transcriptome Analysis Console (TAC).  
